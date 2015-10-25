@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +26,7 @@ public class MigratorApp {
 
     static final String DEFAULT_USER_NAME = "aaime";
 
-    private static int DEFAULT_MAX_ATTEMPTS = 6;;
+    private static int DEFAULT_MAX_ATTEMPTS = 6;
     
     public static void main(String[] args) throws Exception {
         String jiraLocation = inquire("Jira location", DEFAULT_JIRA_LOCATION);
@@ -61,11 +63,20 @@ public class MigratorApp {
             }
             result.add(clazz.newInstance());
         }
+        // have a stable output order
+        Collections.sort(result, new Comparator<Migration> () {
+
+            @Override
+            public int compare(Migration o1, Migration o2) {
+                return o1.getTitle().compareTo(o2.getTitle());
+            }
+            
+        });
         return result;
     }
 
     private static String inquire(String prompt, String defaultValue) throws IOException {
-        System.out.println(prompt + " (" + defaultValue + "): ");
+        System.out.printf(prompt +  (defaultValue != null ? (" (" + defaultValue + ")") : "") + ": ");
         String value = IN_READER.readLine();
         if(value == null || value.isEmpty()) {
             return defaultValue;

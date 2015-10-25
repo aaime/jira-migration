@@ -60,7 +60,7 @@ public class VersionMigration implements Migration {
 
     @Override
     public String getTitle() {
-        return "Version number migrations";
+        return "Migrate affects and fix-for versions";
     }
 
     @Override
