@@ -26,13 +26,8 @@ public class SubTaskMigration implements Migration {
 
     @Override
     public String getTitle() {
-        return "Migrate sub-tasks and reattach them to their parents'";
+        return "Migrate sub-tasks and reattach them to their parents (warning, does not work!)";
     }
 
-    @Override
-    public void init(JiraClient client, String project) throws Exception {
-        // nothing to do
-        
-    }
 
 }

@@ -1,6 +1,9 @@
 package org.geoserver.jira;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,13 +40,17 @@ public class Migrator {
 
     private void launchCallables(File root, ExecutorService executors) {
         if (root.isDirectory()) {
-            for (File f : root.listFiles()) {
+            List<File> files = Arrays.asList(root.listFiles());
+            Collections.sort(files, new FilenameComparator());
+            for (File f : files) {
                 if (f.isDirectory()) {
                     launchCallables(f, executors);
                 } else {
                     String name = f.getName();
-                    if (f.isFile() && name.matches(projectName + "-.*xml")) {
+                    if (f.isFile() && name.startsWith(projectName + "-") && name.endsWith(".xml")) {
                         executors.submit(new TicketCallable(f, jiraProvider, migration, maxAttempts));
+                    } else {
+                        System.out.println("Skipping file " + name);
                     }
                 }
             }

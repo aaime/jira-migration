@@ -12,6 +12,8 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
+import net.rcarz.jiraclient.JiraClient;
+
 public class MigratorApp {
 
     final static String DEFAULT_TICKET_ROOT = "/home/aaime/tmp/codehaus/GEOS";
@@ -48,10 +50,15 @@ public class MigratorApp {
         
         JiraClientProvider jiraProvider = new JiraClientProvider(jiraLocation, username, password);
         jiraProvider.test();
-        migration.init(jiraProvider.getJiraClient(), project);
+        JiraClient client = jiraProvider.getJiraClient();
+        migration.init(client, project);
         
+        long start = System.currentTimeMillis();
         Migrator migrator = new Migrator(jiraProvider, ticketRoot, project, threads, migration, maxAttempts);
         migrator.migrate();
+        migration.dispose(client);
+        long end = System.currentTimeMillis();
+        System.out.println("Migration completed in " + ((end - start) / 1000d) + " seconds");
     }
     
     private static List<Migration> getMigrations() throws InstantiationException, IllegalAccessException {
@@ -75,7 +82,7 @@ public class MigratorApp {
         return result;
     }
 
-    private static String inquire(String prompt, String defaultValue) throws IOException {
+    static String inquire(String prompt, String defaultValue) throws IOException {
         System.out.printf(prompt +  (defaultValue != null ? (" (" + defaultValue + ")") : "") + ": ");
         String value = IN_READER.readLine();
         if(value == null || value.isEmpty()) {

@@ -19,8 +19,6 @@ public class VersionMigration implements Migration {
     
     static final Logger LOGGER = Logger.getLogger(VersionMigration.class.getName());
     Set<String> projectVersions = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-    
-    private String projectName;
 
     @Override
     public void applyMigration(String key, Match item, JiraClientProvider jiraProvider) throws Exception {
@@ -65,7 +63,6 @@ public class VersionMigration implements Migration {
 
     @Override
     public void init(JiraClient client, String projectName) throws Exception {
-        this.projectName = projectName;
         Project project = client.getProject(projectName);
         for (Version version : project.getVersions()) {
             projectVersions.add(version.getName());

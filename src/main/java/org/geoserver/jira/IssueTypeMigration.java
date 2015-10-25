@@ -31,9 +31,4 @@ public class IssueTypeMigration implements Migration {
         return "Migrate issue type for all non 'Bug' tickets'";
     }
 
-    @Override
-    public void init(JiraClient client, String project) throws Exception {
-        // nothing to do
-    }
-
 }
